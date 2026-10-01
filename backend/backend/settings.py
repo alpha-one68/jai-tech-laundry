@@ -15,10 +15,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv(
     "SECRET_KEY",
-    "django-insecure-local-development-only-change-this"
+    "django-insecure-local-development-only-change-this",
 )
 
-DEBUG = os.getenv("DEBUG", "True").lower() == "true"
+# Render: set DEBUG=False
+# Local development: set DEBUG=True if needed
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 
 ALLOWED_HOSTS = [
@@ -28,7 +30,7 @@ ALLOWED_HOSTS = [
 ]
 
 
-# Render automatically provides this variable
+# Render automatically provides this
 RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
 
 if RENDER_EXTERNAL_HOSTNAME:
@@ -51,7 +53,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
 
-    # Your app
+    # Your application
     "jairam",
 ]
 
@@ -63,8 +65,10 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
 
+    # CORS should be near the top
     "corsheaders.middleware.CorsMiddleware",
 
+    # Static files
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -128,15 +132,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
-
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
-
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
@@ -144,7 +145,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # =========================================================
-# LANGUAGE / TIME
+# INTERNATIONALIZATION
 # =========================================================
 
 LANGUAGE_CODE = "en-us"
@@ -181,14 +182,13 @@ STORAGES = {
 # =========================================================
 
 CORS_ALLOWED_ORIGINS = [
+    # Local React / Vite
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-     "https://jai-tech-laundry-1.onrender.com",
+
+    # Production React frontend
+    "https://jai-tech-laundry-1.onrender.com",
 ]
-
-
-# Your deployed React URL
-
 
 
 # =========================================================
