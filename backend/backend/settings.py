@@ -18,9 +18,9 @@ SECRET_KEY = os.getenv(
     "django-insecure-local-development-only-change-this",
 )
 
-# Render: set DEBUG=False
-# Local development: set DEBUG=True if needed
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+# Local default = True
+# On Render set DEBUG=False
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
 
 ALLOWED_HOSTS = [
@@ -30,11 +30,18 @@ ALLOWED_HOSTS = [
 ]
 
 
-# Render automatically provides this
+# Render automatically provides this variable
 RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
 
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+
+# Render HTTPS proxy
+SECURE_PROXY_SSL_HEADER = (
+    "HTTP_X_FORWARDED_PROTO",
+    "https",
+)
 
 
 # =========================================================
@@ -53,7 +60,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
 
-    # Your application
+    # Your app
     "jairam",
 ]
 
@@ -65,8 +72,10 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
 
+    # CORS
     "corsheaders.middleware.CorsMiddleware",
 
+    # Static files
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -128,16 +137,20 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME":
+        "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME":
+        "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME":
+        "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME":
+        "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -166,11 +179,13 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND":
+        "django.core.files.storage.FileSystemStorage",
     },
 
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND":
+        "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
@@ -179,13 +194,28 @@ STORAGES = {
 # CORS
 # =========================================================
 
+FRONTEND_URL = os.getenv(
+    "FRONTEND_URL",
+    "https://jai-tech-laundry-1.onrender.com",
+).rstrip("/")
+
+
+CORS_ALLOW_ALL_ORIGINS = False
+
+
 CORS_ALLOWED_ORIGINS = [
     # Local React / Vite
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 
-    # Production React frontend
-    "https://jai-tech-laundry-1.onrender.com",
+    # Live Render frontend
+    FRONTEND_URL,
+]
+
+
+# Helpful for HTTPS frontend POST requests
+CSRF_TRUSTED_ORIGINS = [
+    FRONTEND_URL,
 ]
 
 
@@ -206,6 +236,3 @@ REST_FRAMEWORK = {
 # =========================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
-CORS_ALLOW_ALL_ORIGINS = True
