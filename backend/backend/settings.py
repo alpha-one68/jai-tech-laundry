@@ -63,11 +63,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
 
-    # WhiteNoise
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-
-    # CORS
     "corsheaders.middleware.CorsMiddleware",
+
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -185,16 +183,12 @@ STORAGES = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+     "https://jai-tech-laundry-1.onrender.com",
 ]
 
 
 # Your deployed React URL
-FRONTEND_URL = os.getenv("FRONTEND_URL")
 
-if FRONTEND_URL:
-    CORS_ALLOWED_ORIGINS.append(
-        FRONTEND_URL.rstrip("/")
-    )
 
 
 # =========================================================
